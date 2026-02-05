@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MyWallet.Domain.Entities;
 
 namespace MyWallet.Infrastructure.Persistence;
 
@@ -9,5 +10,11 @@ public class MyWalletDbContext : DbContext
     {
     }
 
-    // DbSets virão depois
+    public DbSet<User> Users => Set<User>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(MyWalletDbContext).Assembly);
+        base.OnModelCreating(modelBuilder);
+    }
 }
