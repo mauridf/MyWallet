@@ -1,5 +1,7 @@
 using MyWallet.API.HealthChecks;
+using MyWallet.API.Swagger.Examples;
 using MyWallet.Infrastructure.Configurations;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +16,12 @@ builder.Services.AddControllers();
 
 // Swagger completo
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.EnableAnnotations();
+});
+
+builder.Services.AddSwaggerExamplesFromAssemblyOf<UserResponseExample>();
 
 // HealthChecks
 builder.Services.AddHealthChecks();
