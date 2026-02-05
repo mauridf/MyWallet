@@ -1,41 +1,35 @@
 ﻿using BCrypt.Net;
-using Microsoft.EntityFrameworkCore;
 using MyWallet.Application.DTOs;
 using MyWallet.Application.Interfaces;
 using MyWallet.Domain.Entities;
-using MyWallet.Infrastructure.Persistence;
 
 namespace MyWallet.Application.UseCases;
 
 public class UserService : IUserService
 {
-    private readonly MyWalletDbContext _dbContext;
+    private readonly IUserRepository _userRepository;
 
-    public UserService(MyWalletDbContext dbContext)
+    public UserService(IUserRepository userRepository)
     {
-        _dbContext = dbContext;
+        _userRepository = userRepository;
     }
 
     public async Task<UserResponseDto> CreateAsync(CreateUserDto dto)
     {
-        var emailExists = await _dbContext.Users
-            .AnyAsync(u => u.Email == dto.Email);
-
-        if (emailExists)
+        if (await _userRepository.EmailExistsAsync(dto.Email))
             throw new InvalidOperationException("Email already exists");
 
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
         var user = new User(dto.Name, dto.Email, passwordHash);
 
-        _dbContext.Users.Add(user);
-        await _dbContext.SaveChangesAsync();
+        await _userRepository.AddAsync(user);
 
         return MapToResponse(user);
     }
 
     public async Task<UserResponseDto?> GetByIdAsync(Guid id)
     {
-        var user = await _dbContext.Users.FindAsync(id);
+        var user = await _userRepository.GetByIdAsync(id);
         return user == null ? null : MapToResponse(user);
     }
 

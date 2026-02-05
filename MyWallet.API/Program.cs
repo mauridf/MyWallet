@@ -1,3 +1,5 @@
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 using MyWallet.API.HealthChecks;
 using MyWallet.API.Swagger.Examples;
 using MyWallet.Infrastructure.Configurations;
@@ -35,7 +37,28 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+builder.Services
+    .AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "MyWallet",
+            ValidAudience = "MyWallet",
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")!)
+            )
+        };
+    });
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 // Healthcheck endpoint

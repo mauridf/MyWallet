@@ -20,7 +20,7 @@ public class UsersController : ControllerBase
 
     [HttpPost]
     [SwaggerOperation(Summary = "Create a new user")]
-    [SwaggerResponse(StatusCodes.Status201Created, typeof(UserResponseDto))]
+    [SwaggerResponse(StatusCodes.Status201Created, "User created", typeof(UserResponseDto))]
     [SwaggerResponseExample(StatusCodes.Status201Created, typeof(UserResponseExample))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<UserResponseDto>> Create(CreateUserDto dto)
@@ -38,7 +38,7 @@ public class UsersController : ControllerBase
 
     [HttpGet("{id:guid}")]
     [SwaggerOperation(Summary = "Get user by id")]
-    [SwaggerResponse(StatusCodes.Status200OK, typeof(UserResponseDto))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(UserResponseDto))]
     [SwaggerResponseExample(StatusCodes.Status200OK, typeof(UserResponseExample))]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserResponseDto>> GetById(Guid id)
