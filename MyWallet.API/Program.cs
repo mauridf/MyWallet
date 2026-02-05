@@ -1,4 +1,14 @@
+using MyWallet.Infrastructure.Configurations;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddHealthChecks()
+    .AddNpgSql(
+        Environment.GetEnvironmentVariable("MYWALLET_CONNECTION_STRING")!,
+        name: "postgresql");
+
 
 // Controllers
 builder.Services.AddControllers();
