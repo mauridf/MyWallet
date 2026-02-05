@@ -1,6 +1,8 @@
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using MyWallet.API.HealthChecks;
 using MyWallet.API.Swagger.Examples;
 using MyWallet.Infrastructure.Configurations;
@@ -8,20 +10,38 @@ using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Infrastructure
 builder.Services.AddInfrastructure(builder.Configuration);
-
-builder.Services.AddHealthChecks()
-    .AddCheck<DatabaseHealthCheck>("database");
-
 
 // Controllers
 builder.Services.AddControllers();
 
-// Swagger completo
+// JWT
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSettings["Secret"]!)
+            )
+        };
+    });
+
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.EnableAnnotations();
+    options.ExampleFilters();
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -52,7 +72,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddSwaggerExamplesFromAssemblyOf<UserResponseExample>();
 
 // HealthChecks
-builder.Services.AddHealthChecks();
+builder.Services.AddHealthChecks()
+    .AddCheck<DatabaseHealthCheck>("database");
 
 var app = builder.Build();
 
@@ -64,30 +85,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-builder.Services
-    .AddAuthentication("Bearer")
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = "MyWallet",
-            ValidAudience = "MyWallet",
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")!)
-            )
-        };
-    });
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// Healthcheck endpoint
 app.MapHealthChecks("/health");
 
 app.Run();
