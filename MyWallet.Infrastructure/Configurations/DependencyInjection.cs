@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyWallet.Infrastructure.Persistence;
+using MyWallet.Application.Interfaces;
+using MyWallet.Application.UseCases;
 
 namespace MyWallet.Infrastructure.Configurations;
 
@@ -18,6 +20,8 @@ public static class DependencyInjection
 
         services.AddDbContext<MyWalletDbContext>(options =>
             options.UseNpgsql(connectionString));
+
+        services.AddScoped<IUserService, UserService>();
 
         return services;
     }

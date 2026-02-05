@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MyWallet.API.Swagger.Examples;
 using MyWallet.Application.DTOs;
-using MyWallet.Domain.Entities;
-using MyWallet.Infrastructure.Persistence;
+using MyWallet.Application.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
+using MyWallet.API.Swagger.Examples;
 
 namespace MyWallet.API.Controllers;
 
@@ -13,60 +11,43 @@ namespace MyWallet.API.Controllers;
 [Route("api/users")]
 public class UsersController : ControllerBase
 {
-    private readonly MyWalletDbContext _dbContext;
+    private readonly IUserService _userService;
 
-    public UsersController(MyWalletDbContext dbContext)
+    public UsersController(IUserService userService)
     {
-        _dbContext = dbContext;
+        _userService = userService;
     }
 
     [HttpPost]
     [SwaggerOperation(Summary = "Create a new user")]
-    [SwaggerResponse(StatusCodes.Status201Created, "User created", typeof(UserResponseDto))]
+    [SwaggerResponse(StatusCodes.Status201Created, typeof(UserResponseDto))]
     [SwaggerResponseExample(StatusCodes.Status201Created, typeof(UserResponseExample))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<UserResponseDto>> Create(CreateUserDto dto)
     {
-        if (await _dbContext.Users.AnyAsync(u => u.Email == dto.Email))
-            return BadRequest("Email already exists");
-
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-        var user = new User(dto.Name, dto.Email, passwordHash);
-
-        _dbContext.Users.Add(user);
-        await _dbContext.SaveChangesAsync();
-
-        var response = new UserResponseDto
+        try
         {
-            Id = user.Id,
-            Name = user.Name,
-            Email = user.Email,
-            IsActive = user.IsActive,
-            CreatedAt = user.CreatedAt
-        };
-
-        return CreatedAtAction(nameof(GetById), new { id = user.Id }, response);
+            var result = await _userService.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("{id:guid}")]
     [SwaggerOperation(Summary = "Get user by id")]
-    [SwaggerResponse(StatusCodes.Status200OK, "User found", typeof(UserResponseDto))]
+    [SwaggerResponse(StatusCodes.Status200OK, typeof(UserResponseDto))]
     [SwaggerResponseExample(StatusCodes.Status200OK, typeof(UserResponseExample))]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserResponseDto>> GetById(Guid id)
     {
-        var user = await _dbContext.Users.FindAsync(id);
+        var result = await _userService.GetByIdAsync(id);
 
-        if (user == null)
+        if (result == null)
             return NotFound();
 
-        return Ok(new UserResponseDto
-        {
-            Id = user.Id,
-            Name = user.Name,
-            Email = user.Email,
-            IsActive = user.IsActive,
-            CreatedAt = user.CreatedAt
-        });
+        return Ok(result);
     }
 }
