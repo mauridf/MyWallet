@@ -8,6 +8,7 @@ public class Transaction : Entity
     public decimal Amount { get; private set; }
     public TransactionType Type { get; private set; }
     public Guid AccountId { get; private set; }
+    public Account Account { get; private set; } = null!;
 
     protected Transaction() { }
 

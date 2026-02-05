@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Microsoft.OpenApi.Models;
 using MyWallet.API.HealthChecks;
 using MyWallet.API.Swagger.Examples;
 using MyWallet.Infrastructure.Configurations;
@@ -45,31 +44,18 @@ builder.Services.AddSwaggerGen(options =>
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
+        Description = "JWT Authorization header using the Bearer scheme. Ex: \"Bearer {token}\"",
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Bearer {token}"
-    });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
     });
 });
 
 builder.Services.AddSwaggerExamplesFromAssemblyOf<UserResponseExample>();
+builder.Services.AddSwaggerExamplesFromAssemblyOf<AccountResponseExample>();
+builder.Services.AddSwaggerExamplesFromAssemblyOf<TransactionResponseExample>();
 
 // HealthChecks
 builder.Services.AddHealthChecks()

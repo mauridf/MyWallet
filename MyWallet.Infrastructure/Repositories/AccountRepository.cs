@@ -26,4 +26,16 @@ public class AccountRepository : IAccountRepository
             .Where(a => a.UserId == userId)
             .ToListAsync();
     }
+
+    public async Task<Account?> GetByIdAsync(Guid accountId, Guid userId)
+    {
+        return await _context.Accounts
+            .FirstOrDefaultAsync(a => a.Id == accountId && a.UserId == userId);
+    }
+
+    public async Task UpdateAsync(Account account)
+    {
+        _context.Accounts.Update(account);
+        await _context.SaveChangesAsync();
+    }
 }

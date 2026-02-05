@@ -6,6 +6,8 @@ public class Account : Entity
     public decimal Balance { get; private set; }
     public Guid UserId { get; private set; }
 
+    public ICollection<Transaction> Transactions { get; private set; } = new List<Transaction>();
+
     protected Account() { }
 
     public Account(string name, Guid userId)
@@ -25,6 +27,16 @@ public class Account : Entity
         if (amount > Balance)
             throw new InvalidOperationException("Insufficient balance");
 
+        Balance -= amount;
+    }
+
+    public void AddBalance(decimal amount)
+    {
+        Balance += amount;
+    }
+
+    public void SubtractBalance(decimal amount)
+    {
         Balance -= amount;
     }
 }
