@@ -5,6 +5,7 @@ using MyWallet.Application.Interfaces;
 using MyWallet.Application.UseCases;
 using MyWallet.Infrastructure.Persistence;
 using MyWallet.Infrastructure.Repositories;
+using MyWallet.Infrastructure.Security;
 
 namespace MyWallet.Infrastructure.Configurations;
 
@@ -24,6 +25,8 @@ public static class DependencyInjection
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ITokenService, JwtTokenService>();
 
         return services;
     }
