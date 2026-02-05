@@ -12,6 +12,14 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Middlewares\" />
+    <Folder Include="HealthChecks\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyWallet.Application\MyWallet.Application.csproj" />
+    <ProjectReference Include="..\MyWallet.Infrastructure\MyWallet.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
