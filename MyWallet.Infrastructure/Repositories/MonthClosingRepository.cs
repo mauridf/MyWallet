@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyWallet.Domain.Entities;
-using MyWallet.Domain.Interfaces;
 using MyWallet.Infrastructure.Persistence;
 
 public class MonthClosingRepository : IMonthClosingRepository
