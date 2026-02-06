@@ -68,7 +68,9 @@ public class TransactionService : ITransactionService
         Guid? accountId
     )
     {
-        var transactions = await _transactionRepository.GetByFilteredAsync(userId, year, month, accountId);
+        var transactions = await _transactionRepository.GetFilteredAsync(
+            userId, year, month, accountId
+        );
 
         return transactions.Select(t => new TransactionResponseDto
         {

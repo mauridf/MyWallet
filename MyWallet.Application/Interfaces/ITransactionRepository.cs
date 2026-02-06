@@ -9,10 +9,10 @@ public interface ITransactionRepository
         DateTime start,
         DateTime end
     );
-    Task<IEnumerable<Transaction>> GetByFilteredAsync(
+    Task<IEnumerable<Transaction>> GetFilteredAsync(
         Guid userId,
-        DateTime? start,
-        DateTime? end,
+        int? year,
+        int? month,
         Guid? accountId
     );
 }

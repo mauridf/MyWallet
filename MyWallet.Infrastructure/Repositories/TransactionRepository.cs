@@ -43,7 +43,12 @@ public class TransactionRepository : ITransactionRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Transaction>> GetByFilteredAsync(Guid userId, DateTime? start, DateTime? end, Guid? accountId)
+    public async Task<IEnumerable<Transaction>> GetFilteredAsync(
+    Guid userId,
+    int? year,
+    int? month,
+    Guid? accountId
+)
     {
         var query = _context.Transactions
             .Include(t => t.Account)
@@ -52,9 +57,13 @@ public class TransactionRepository : ITransactionRepository
 
         if (year.HasValue && month.HasValue)
         {
-            var start = new DateTime(year.Value, month.Value, 1);
-            var end = start.AddMonths(1).AddTicks(-1);
-            query = query.Where(t => t.CreatedAt >= start && t.CreatedAt <= end);
+            var startDate = new DateTime(year.Value, month.Value, 1);
+            var endDate = startDate.AddMonths(1).AddTicks(-1);
+
+            query = query.Where(t =>
+                t.CreatedAt >= startDate &&
+                t.CreatedAt <= endDate
+            );
         }
 
         if (accountId.HasValue)
