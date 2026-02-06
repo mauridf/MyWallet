@@ -40,4 +40,32 @@ public class AccountsController : BaseController
         var userId = GetUserId();
         return Ok(await _service.GetAllAsync(userId));
     }
+
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get account by id")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(AccountResponseDto))]
+    public async Task<ActionResult<AccountResponseDto>> GetById(Guid id)
+    {
+        var userId = GetUserId();
+        return Ok(await _service.GetByIdAsync(id, userId));
+    }
+
+    [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Update account")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Updated", typeof(AccountResponseDto))]
+    public async Task<ActionResult<AccountResponseDto>> Update(Guid id, UpdateAccountDto dto)
+    {
+        var userId = GetUserId();
+        return Ok(await _service.UpdateAsync(id, dto, userId));
+    }
+
+    [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "Deactivate account")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Deactivated")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var userId = GetUserId();
+        await _service.DeleteAsync(id, userId);
+        return NoContent();
+    }
 }

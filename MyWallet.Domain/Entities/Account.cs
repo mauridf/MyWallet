@@ -1,10 +1,11 @@
-﻿namespace MyWallet.Domain.Entities;
+﻿using MyWallet.Domain.Entities;
 
 public class Account : Entity
 {
     public string Name { get; private set; }
     public decimal Balance { get; private set; }
     public Guid UserId { get; private set; }
+    public bool IsActive { get; private set; }
 
     public ICollection<Transaction> Transactions { get; private set; } = new List<Transaction>();
 
@@ -15,18 +16,25 @@ public class Account : Entity
         Name = name;
         UserId = userId;
         Balance = 0;
+        IsActive = true;
     }
 
-    public void Credit(decimal amount)
+    public void Update(string name)
     {
-        Balance += amount;
+        Name = name;
     }
+
+    public void Deactivate()
+    {
+        IsActive = false;
+    }
+
+    public void Credit(decimal amount) => Balance += amount;
 
     public void Debit(decimal amount)
     {
         if (amount > Balance)
             throw new InvalidOperationException("Insufficient balance");
-
         Balance -= amount;
     }
 }

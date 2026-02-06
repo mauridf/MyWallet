@@ -1,4 +1,5 @@
-﻿using MyWallet.Application.DTOs;
+﻿using System.Security.Principal;
+using MyWallet.Application.DTOs;
 using MyWallet.Application.Interfaces;
 using MyWallet.Domain.Entities;
 
@@ -37,4 +38,36 @@ public class AccountService : IAccountService
             Balance = a.Balance
         }).ToList();
     }
+
+    public async Task<AccountResponseDto> GetByIdAsync(Guid id, Guid userId)
+    {
+        var account = await _repository.GetByIdAsync(id, userId);
+        return new AccountResponseDto
+        {
+            Id = account.Id,
+            Name = account.Name,
+            Balance = account.Balance
+        };
+    }
+
+    public async Task<AccountResponseDto> UpdateAsync(Guid id, UpdateAccountDto dto, Guid userId)
+    {
+        var account = await _repository.GetByIdAsync(id, userId);
+        account.Update(dto.Name);
+        await _repository.UpdateAsync(account);
+        return new AccountResponseDto
+        {
+            Id = account.Id,
+            Name = account.Name,
+            Balance = account.Balance
+        };
+    }
+
+    public async Task DeleteAsync(Guid id, Guid userId)
+    {
+        var account = await _repository.GetByIdAsync(id, userId);
+        account.Deactivate();
+        await _repository.UpdateAsync(account);
+    }
+
 }

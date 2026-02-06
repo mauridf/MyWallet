@@ -30,7 +30,8 @@ public class AccountRepository : IAccountRepository
     public async Task<Account?> GetByIdAsync(Guid accountId, Guid userId)
     {
         return await _context.Accounts
-            .FirstOrDefaultAsync(a => a.Id == accountId && a.UserId == userId);
+        .FirstOrDefaultAsync(a => a.Id == accountId && a.UserId == userId && a.IsActive)
+        ?? throw new Exception("Account not found");
     }
 
     public async Task UpdateAsync(Account account)
