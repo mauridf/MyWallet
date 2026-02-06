@@ -36,6 +36,9 @@ public static class DependencyInjection
         services.AddHostedService<MonthlyClosingWorker>();
 
 
+        services.AddScoped<IMonthlySnapshotRepository, MonthlySnapshotRepository>();
+        services.AddScoped<IMonthClosingRepository, MonthClosingRepository>();
+
         return services;
     }
 }
