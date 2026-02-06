@@ -13,6 +13,8 @@ public class MyWalletDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
+    public DbSet<MonthlySnapshot> MonthlySnapshots { get; set; }
+    public DbSet<MonthClosing> MonthClosings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
