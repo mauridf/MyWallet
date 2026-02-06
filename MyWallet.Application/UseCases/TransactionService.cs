@@ -23,9 +23,9 @@ public class TransactionService : ITransactionService
             throw new InvalidOperationException("Account not found");
 
         if (dto.Type == TransactionType.Income)
-            account.AddBalance(dto.Amount);
+            account.Credit(dto.Amount);
         else
-            account.SubtractBalance(dto.Amount);
+            account.Debit(dto.Amount);
 
         var transaction = new Transaction(
             dto.Description,

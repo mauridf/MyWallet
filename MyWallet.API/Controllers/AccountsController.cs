@@ -11,7 +11,7 @@ namespace MyWallet.API.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/accounts")]
-public class AccountsController : ControllerBase
+public class AccountsController : BaseController
 {
     private readonly IAccountService _service;
 
@@ -26,7 +26,7 @@ public class AccountsController : ControllerBase
     [SwaggerResponseExample(StatusCodes.Status201Created, typeof(AccountResponseExample))]
     public async Task<ActionResult<AccountResponseDto>> Create(CreateAccountDto dto)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = GetUserId();
         var result = await _service.CreateAsync(dto, userId);
         return Created(string.Empty, result);
     }
@@ -37,7 +37,7 @@ public class AccountsController : ControllerBase
     [SwaggerResponseExample(StatusCodes.Status200OK, typeof(AccountListExample))]
     public async Task<ActionResult<List<AccountResponseDto>>> GetAll()
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = GetUserId();
         return Ok(await _service.GetAllAsync(userId));
     }
 }

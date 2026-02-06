@@ -29,14 +29,4 @@ public class Account : Entity
 
         Balance -= amount;
     }
-
-    public void AddBalance(decimal amount)
-    {
-        Balance += amount;
-    }
-
-    public void SubtractBalance(decimal amount)
-    {
-        Balance -= amount;
-    }
 }
