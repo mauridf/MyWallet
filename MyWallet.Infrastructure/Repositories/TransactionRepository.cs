@@ -24,6 +24,9 @@ public class TransactionRepository : ITransactionRepository
         DateTime end
     )
     {
+        start = DateTime.SpecifyKind(start, DateTimeKind.Utc);
+        end = DateTime.SpecifyKind(end, DateTimeKind.Utc);
+
         return await _context.Transactions
             .Include(t => t.Account)
             .Where(t =>
@@ -33,6 +36,7 @@ public class TransactionRepository : ITransactionRepository
             )
             .ToListAsync();
     }
+
 
     public async Task<IEnumerable<Transaction>> GetAllByUserAsync(Guid userId)
     {
@@ -57,7 +61,7 @@ public class TransactionRepository : ITransactionRepository
 
         if (year.HasValue && month.HasValue)
         {
-            var startDate = new DateTime(year.Value, month.Value, 1);
+            var startDate = new DateTime(year.Value, month.Value, 1, 0, 0, 0, DateTimeKind.Utc);
             var endDate = startDate.AddMonths(1).AddTicks(-1);
 
             query = query.Where(t =>
