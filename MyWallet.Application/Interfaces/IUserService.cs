@@ -6,4 +6,5 @@ public interface IUserService
 {
     Task<UserResponseDto> CreateAsync(CreateUserDto dto);
     Task<UserResponseDto?> GetByIdAsync(Guid id);
+    Task<IEnumerable<UserResponseDto>> GetAllAsync();
 }

@@ -52,4 +52,15 @@ public class UsersController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpGet]
+    [SwaggerOperation(Summary = "Get all users")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(List<UserResponseDto>))]
+    [SwaggerResponseExample(StatusCodes.Status200OK, typeof(UserListExample))]
+    public async Task<ActionResult<List<UserResponseDto>>> GetAll()
+    {
+        var result = await _userService.GetAllAsync();
+        return Ok(result);
+    }
+
 }

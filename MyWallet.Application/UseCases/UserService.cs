@@ -44,4 +44,18 @@ public class UserService : IUserService
             CreatedAt = user.CreatedAt
         };
     }
+
+    public async Task<IEnumerable<UserResponseDto>> GetAllAsync()
+    {
+        var users = await _userRepository.GetAllAsync();
+
+        return users.Select(u => new UserResponseDto
+        {
+            Id = u.Id,
+            Name = u.Name,
+            Email = u.Email,
+            IsActive = u.IsActive,
+            CreatedAt = u.CreatedAt
+        });
+    }
 }
