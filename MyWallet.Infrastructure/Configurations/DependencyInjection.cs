@@ -31,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<IDashboardService, DashboardService>();
 
         services.AddHostedService<MonthlyClosingWorker>();
 
