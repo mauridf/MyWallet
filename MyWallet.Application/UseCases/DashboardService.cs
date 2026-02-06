@@ -36,6 +36,8 @@ public class DashboardService : IDashboardService
 
         return new DashboardSummaryDto
         {
+            Year = year,
+            Month = month,
             TotalIncome = income,
             TotalExpense = expense,
             Balance = income - expense
