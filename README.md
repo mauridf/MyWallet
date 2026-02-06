@@ -70,4 +70,4 @@ exposição
 -   Multi-tenant
 -   Produto comercial
 
-MyWallet não é projeto pessoal. É produto.
+MyWallet é um projeto pessoal. Mas tem pretenção de virar produto.
