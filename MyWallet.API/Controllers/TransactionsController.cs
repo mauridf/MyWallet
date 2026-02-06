@@ -12,7 +12,7 @@ namespace MyWallet.API.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/transactions")]
-public class TransactionsController : ControllerBase
+public class TransactionsController : BaseController
 {
     private readonly ITransactionService _service;
 

@@ -34,20 +34,28 @@ public class TransactionRepository : ITransactionRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Transaction>> GetByFiltersAsync(
-    Guid userId,
-    DateTime? start,
-    DateTime? end,
-    Guid? accountId
-)
+    public async Task<IEnumerable<Transaction>> GetAllByUserAsync(Guid userId)
+    {
+        return await _context.Transactions
+            .Include(t => t.Account)
+            .Where(t => t.Account.UserId == userId)
+            .OrderByDescending(t => t.CreatedAt)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Transaction>> GetByFilteredAsync(Guid userId, DateTime? start, DateTime? end, Guid? accountId)
     {
         var query = _context.Transactions
             .Include(t => t.Account)
             .Where(t => t.Account.UserId == userId)
             .AsQueryable();
 
-        if (start.HasValue && end.HasValue)
+        if (year.HasValue && month.HasValue)
+        {
+            var start = new DateTime(year.Value, month.Value, 1);
+            var end = start.AddMonths(1).AddTicks(-1);
             query = query.Where(t => t.CreatedAt >= start && t.CreatedAt <= end);
+        }
 
         if (accountId.HasValue)
             query = query.Where(t => t.AccountId == accountId);

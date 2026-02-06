@@ -46,25 +46,11 @@ public class TransactionService : ITransactionService
         };
     }
 
-    public async Task<IEnumerable<TransactionResponseDto>> GetFilteredAsync(
-    Guid userId,
-    int? year,
-    int? month,
-    Guid? accountId
-)
+    public async Task<List<TransactionResponseDto>> GetAllAsync(Guid userId)
     {
-        DateTime? start = null;
-        DateTime? end = null;
+        var transactions = await _transactionRepository.GetAllByUserAsync(userId);
 
-        if (year.HasValue && month.HasValue)
-        {
-            start = new DateTime(year.Value, month.Value, 1);
-            end = start.Value.AddMonths(1).AddTicks(-1);
-        }
-
-        var list = await _transactionRepository.GetByFiltersAsync(userId, start, end, accountId);
-
-        return list.Select(t => new TransactionResponseDto
+        return transactions.Select(t => new TransactionResponseDto
         {
             Id = t.Id,
             Description = t.Description,
@@ -72,6 +58,26 @@ public class TransactionService : ITransactionService
             Type = t.Type,
             AccountId = t.AccountId,
             CreatedAt = t.CreatedAt
-        });
+        }).ToList();
+    }
+
+    public async Task<List<TransactionResponseDto>> GetFilteredAsync(
+        Guid userId,
+        int? year,
+        int? month,
+        Guid? accountId
+    )
+    {
+        var transactions = await _transactionRepository.GetByFilteredAsync(userId, year, month, accountId);
+
+        return transactions.Select(t => new TransactionResponseDto
+        {
+            Id = t.Id,
+            Description = t.Description,
+            Amount = t.Amount,
+            Type = t.Type,
+            AccountId = t.AccountId,
+            CreatedAt = t.CreatedAt
+        }).ToList();
     }
 }
