@@ -32,6 +32,9 @@ public static class DependencyInjection
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
 
+        services.AddHostedService<MonthlyClosingWorker>();
+
+
         return services;
     }
 }
