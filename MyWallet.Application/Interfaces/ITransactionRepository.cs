@@ -8,4 +8,10 @@ public interface ITransactionRepository
         DateTime start,
         DateTime end
     );
+    Task<IEnumerable<Transaction>> GetByFiltersAsync(
+        Guid userId,
+        DateTime? start,
+        DateTime? end,
+        Guid? accountId
+    );
 }

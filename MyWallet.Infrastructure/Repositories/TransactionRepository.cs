@@ -33,4 +33,27 @@ public class TransactionRepository : ITransactionRepository
             )
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<Transaction>> GetByFiltersAsync(
+    Guid userId,
+    DateTime? start,
+    DateTime? end,
+    Guid? accountId
+)
+    {
+        var query = _context.Transactions
+            .Include(t => t.Account)
+            .Where(t => t.Account.UserId == userId)
+            .AsQueryable();
+
+        if (start.HasValue && end.HasValue)
+            query = query.Where(t => t.CreatedAt >= start && t.CreatedAt <= end);
+
+        if (accountId.HasValue)
+            query = query.Where(t => t.AccountId == accountId);
+
+        return await query
+            .OrderByDescending(t => t.CreatedAt)
+            .ToListAsync();
+    }
 }

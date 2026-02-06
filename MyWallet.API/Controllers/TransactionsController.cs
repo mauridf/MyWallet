@@ -31,4 +31,22 @@ public class TransactionsController : ControllerBase
         var result = await _service.CreateAsync(dto, userId);
         return Created(string.Empty, result);
     }
+
+    [HttpGet]
+    [SwaggerOperation(Summary = "Get transactions")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(List<TransactionResponseDto>))]
+    [SwaggerResponseExample(StatusCodes.Status200OK, typeof(TransactionListExample))]
+    public async Task<ActionResult<List<TransactionResponseDto>>> Get(
+        [FromQuery] int? year,
+        [FromQuery] int? month,
+        [FromQuery] Guid? accountId
+    )
+    {
+        var userId = GetUserId();
+
+        if (!year.HasValue && !month.HasValue && !accountId.HasValue)
+            return Ok(await _service.GetAllAsync(userId));
+
+        return Ok(await _service.GetFilteredAsync(userId, year, month, accountId));
+    }
 }
