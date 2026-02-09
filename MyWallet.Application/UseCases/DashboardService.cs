@@ -81,4 +81,18 @@ public class DashboardService : IDashboardService
             Balance = s.Balance
         });
     }
+
+    public async Task<IEnumerable<MonthlySnapshotResponseDto>> GetHistory(Guid userId, int months)
+    {
+        var snapshots = await _snapshotRepository.GetLastMonthsAsync(userId, months);
+
+        return snapshots.Select(s => new MonthlySnapshotResponseDto
+        {
+            Year = s.Year,
+            Month = s.Month,
+            TotalIncome = s.TotalIncome,
+            TotalExpense = s.TotalExpense,
+            Balance = s.Balance
+        });
+    }
 }

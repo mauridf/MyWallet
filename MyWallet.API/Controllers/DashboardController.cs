@@ -62,4 +62,15 @@ public class DashboardController : BaseController
             "dashboard.csv"
         );
     }
+
+    [HttpGet("history")]
+    [SwaggerOperation(Summary = "Get dashboard history")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(List<MonthlySnapshotResponseDto>))]
+    [SwaggerResponseExample(StatusCodes.Status200OK, typeof(MonthlySnapshotListExample))]
+    public async Task<IActionResult> GetHistory([FromQuery] int months = 6)
+    {
+        var userId = GetUserId();
+        var result = await _service.GetHistory(userId, months);
+        return Ok(result);
+    }
 }
